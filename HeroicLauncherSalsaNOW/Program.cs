@@ -29,7 +29,6 @@ namespace HeroicLauncherSalsaNOW
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string heroicConfigDir = Path.Combine(appDataPath, "heroic");
             string configJsonPath = Path.Combine(heroicConfigDir, "config.json");
-                        string configContent = File.ReadAllText(configJsonPath);
 
             if (!Directory.Exists(heroicPath))
             {
@@ -76,7 +75,7 @@ namespace HeroicLauncherSalsaNOW
                 UseShellExecute = false
             });
 
-            Thread.Sleep(1000); // Wait for 1 second to ensure Heroic Launcher has started
+            Thread.Sleep(2000);
 
             if (File.Exists(powershellRename))
             {
@@ -88,14 +87,17 @@ namespace HeroicLauncherSalsaNOW
                 File.Move(powershellRename, powershellPath);
             }
 
-            if (configContent.Contains("\"checkForUpdatesOnStartup\": true"))
+            Thread.Sleep(2000);
+
+            if (File.Exists(configJsonPath))
             {
-                Console.WriteLine("Updating Heroic config.json... DO NOT CLOSE ME");
-
-                Thread.Sleep(2000);
-
-                configContent = configContent.Replace("\"checkForUpdatesOnStartup\": true", "\"checkForUpdatesOnStartup\": false");
-                File.WriteAllText(configJsonPath, configContent);
+                string configContent = File.ReadAllText(configJsonPath);
+                if (configContent.Contains("\"checkForUpdatesOnStartup\": true"))
+                {
+                    Console.WriteLine("Updating Heroic config.json...");
+                    configContent = configContent.Replace("\"checkForUpdatesOnStartup\": true", "\"checkForUpdatesOnStartup\": false");
+                    File.WriteAllText(configJsonPath, configContent);
+                }
             }
         }
     }
